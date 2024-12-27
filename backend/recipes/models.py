@@ -84,4 +84,4 @@ class RecipeIngredient(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    quantity = models.PositiveSmallIntegerField('Количество')
+    amount = models.PositiveSmallIntegerField('Количество')
