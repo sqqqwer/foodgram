@@ -3,8 +3,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from foodgram.constants import (MEASUREMENT_UNITS, MEASUREMENT_UNITS_INDEX,
+                                MIN_INGREDIENT_AMOUNT,
                                 MIN_RECIPE_COOKING_TIME_VALUE)
-from recipes.mixins import ModelWithName
+from recipes.mixins import ModelWithName, RecipeUserModel
 
 User = get_user_model()
 
@@ -50,27 +51,49 @@ class Recipe(ModelWithName):
         through='RecipeIngredient',
         verbose_name='Игредиенты'
     )
-    image = models.ImageField('Изображение', upload_to='recipes/')
+    image = models.ImageField('Изображение', null=False, upload_to='recipes/')
     text = models.TextField('Текст')
     cooking_time = models.PositiveIntegerField(
         'Время приготовления',
         validators=[MinValueValidator(MIN_RECIPE_COOKING_TIME_VALUE),]
-    )
-    favourite = models.ManyToManyField(
-        User,
-        verbose_name='Избранное',
-        related_name='favourites_recipe'
-    )
-    Cart = models.ManyToManyField(
-        User,
-        verbose_name='Корзина',
-        related_name='recipes_in_cart'
     )
 
     class Meta:
         verbose_name = 'рецепт'
         verbose_name_plural = 'Рецепты'
         default_related_name = 'recipes'
+
+
+class Cart(RecipeUserModel):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipes_in_cart'
+    )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='%(app_label)s_%(class)s_prevent_not_unique_object'
+            ),
+        )
+
+
+class Favourite(RecipeUserModel):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favourites_recipe'
+    )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='%(app_label)s_%(class)s_prevent_not_unique_object'
+            ),
+        )
 
 
 class RecipeIngredient(models.Model):
@@ -84,4 +107,18 @@ class RecipeIngredient(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    amount = models.PositiveSmallIntegerField('Количество')
+    amount = models.PositiveSmallIntegerField(
+        'Количество',
+        validators=[MinValueValidator(MIN_INGREDIENT_AMOUNT),]
+    )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('recipe', 'ingredient'),
+                name=(
+                    '%(app_label)s_%(class)s_prevent_not'
+                    '_unique_ingredient_in_recipe'
+                )
+            ),
+        )
