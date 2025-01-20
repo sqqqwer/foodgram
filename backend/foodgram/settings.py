@@ -8,7 +8,12 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'test_django_key')
 
 DEBUG = os.getenv('DJANGO_DEBUG', 'true').lower() == 'true'
 
+SITE_DOMANE = os.getenv('SITE_DOMANE', 'test_domane.net').lower()
+
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split()
+
+if SITE_DOMANE not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(SITE_DOMANE)
 
 
 INSTALLED_APPS = [
@@ -19,10 +24,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users.apps.UsersConfig',
+    'django_filters',
+    'rest_framework.authtoken',
     'djoser',
+    'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
-    'api.apps.ApiConfig'
+    'linkshortener.apps.LinkshortenerConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -58,8 +66,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'foodgram'),
+        'USER': os.getenv('POSTGRES_USER', 'foodgram_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', 5432)
     }
 }
 
@@ -99,10 +111,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTHENTICATION_BACKENDS = [
+    "djoser.auth_backends.LoginFieldBackend",
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', 
+        'rest_framework.permissions.IsAuthenticated',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -119,6 +134,10 @@ REST_FRAMEWORK = {
         'anon': '1000/day',
     },
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 6,
+}
+
+DJOSER = {
+  'LOGIN_FIELD': 'email',
 }
