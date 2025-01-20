@@ -13,27 +13,28 @@ class User(AbstractUser):
     )
     first_name = models.CharField('Имя', max_length=USER_CHAR_MAX_LENGHT)
     last_name = models.CharField('Фамилия', max_length=USER_CHAR_MAX_LENGHT)
+    avatar = models.ImageField('Аватар', null=True, upload_to='users/')
 
 
-class Subscride(models.Model):
+class Subscribe(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscride')
-    subscride_to = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscrides')
+        User, on_delete=models.CASCADE, related_name='subscribe')
+    subscribe_to = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='subscribes')
 
     class Meta:
         verbose_name = 'подписка'
         verbose_name_plural = 'Подписки'
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'subscride_to'),
-                name='%(app_label)s_%(class)s_prevent_not_unique_subscride'
+                fields=('user', 'subscribe_to'),
+                name='%(app_label)s_%(class)s_prevent_not_unique_subscribe'
             ),
             models.CheckConstraint(
-                check=~models.Q(user=models.F('subscride_to')),
-                name='%(app_label)s_%(class)s_prevent_self_subscride',
+                check=~models.Q(user=models.F('subscribe_to')),
+                name='%(app_label)s_%(class)s_prevent_self_subscribe',
             ),
         )
 
     def __str__(self):
-        return f'{self.user}-{self.subscride_to}'[:STR_OUTPUT_LIMIT]
+        return f'{self.user}-{self.subscribe_to}'[:STR_OUTPUT_LIMIT]
