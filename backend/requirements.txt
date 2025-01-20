@@ -1,0 +1,9 @@
+Django==5.1.4
+djangorestframework==3.15.2
+djoser==2.3.1
+Pillow==11.0.0
+gunicorn==23.0.0
+django-filter==24.3
+drf-extra-fields==3.7.0
+psycopg2-binary==2.9.10
+

@@ -1,0 +1,4 @@
+venv
+db.sqlite3
+.git
+collected_static
