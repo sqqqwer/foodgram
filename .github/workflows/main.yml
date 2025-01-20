@@ -20,8 +20,8 @@ jobs:
         pip install -r ./backend/requirements.txt
     - name: Test with flake8
       run: |
-      cd backend/
-      python -m flake8
+        cd backend/
+        python -m flake8
   frontend_tests:
     name: Frontend tests
     if: github.ref == 'refs/heads/main'
