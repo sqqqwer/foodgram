@@ -3,8 +3,8 @@ from django.db import models
 
 from foodgram.constants import STANDART_CHAR_MAX_LENGHT, STR_OUTPUT_LIMIT
 
-
 User = get_user_model()
+
 
 class ModelWithName(models.Model):
     name = models.CharField('Название', max_length=STANDART_CHAR_MAX_LENGHT)
