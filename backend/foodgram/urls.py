@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
-    # path('', admin.site.urls),
-    # path('users/', admin.site.urls),
+    path('api/', include('api.urls')),
+    path('s/', include('linkshortener.urls')),
     path('admin/', admin.site.urls),
 ]
