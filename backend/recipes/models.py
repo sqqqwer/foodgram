@@ -62,6 +62,7 @@ class Recipe(ModelWithName):
         verbose_name = 'рецепт'
         verbose_name_plural = 'Рецепты'
         default_related_name = 'recipes'
+        ordering = ('-pub_date', )
 
 
 class Cart(RecipeUserModel):
