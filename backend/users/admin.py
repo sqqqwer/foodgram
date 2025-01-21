@@ -8,3 +8,4 @@ User = get_user_model()
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     model = User
+    search_fields = ('username', 'first_name', 'email')
