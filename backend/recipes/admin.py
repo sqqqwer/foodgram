@@ -11,8 +11,7 @@ class IngredientTabular(admin.TabularInline):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
-    list_filter = ('measurement_unit', )
+    list_display = ('name', )
     search_fields = ('name', )
 
 
@@ -24,23 +23,28 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author_link', 'ingredients_link', 'tags_link')
+    list_display = ('name', 'author_link', 'ingredients_link',
+                    'tags_link', 'count_in_favourites')
     list_filter = ('tags', )
     inlines = (IngredientTabular, )
     search_fields = ('name', 'author__username')
 
-    @admin.display(description='tags')
+    @admin.display(description='В избранных у')
+    def count_in_favourites(self, obj):
+        return obj.favourites_recipe.count()
+
+    @admin.display(description='Тэги')
     def tags_link(self, obj):
         return self._get_many_objects_links_html(
             obj.tags.all()
         )
 
-    @admin.display(description='author')
+    @admin.display(description='Автор')
     def author_link(self, obj):
         author = obj.author
         return self._get_object_link_html(author, author.username)
 
-    @admin.display(description='ingredients')
+    @admin.display(description='Ингредиенты')
     def ingredients_link(self, obj):
         return self._get_many_objects_links_html(
             obj.ingredients.all()
