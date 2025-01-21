@@ -32,4 +32,4 @@ services:
       - static_volume:/usr/share/nginx/html/
       - media_volume:/media
     ports:
-      - 80:80 
+      - 5000:80 
