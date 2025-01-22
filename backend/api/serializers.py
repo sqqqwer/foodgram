@@ -118,7 +118,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         queryset=Ingredient.objects.all()
     )
     amount = serializers.IntegerField(
-        validators=[MinValueValidator(MIN_INGREDIENT_AMOUNT),]
+        validators=[MinValueValidator(MIN_INGREDIENT_AMOUNT), ]
     )
 
     class Meta:
