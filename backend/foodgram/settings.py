@@ -8,7 +8,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'test_django_key')
 
 DEBUG = os.getenv('DJANGO_DEBUG', 'true').lower() == 'true'
 
-SITE_DOMANE = os.getenv('SITE_DOMANE', 'test_domane.net').lower()
+SITE_DOMANE = os.getenv('SITE_DOMANE', 'test_domane.net')
+CSRF_TRUSTED_ORIGINS = [os.getenv('SITE_DOMANE', 'test_domane.net')]
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split()
 
