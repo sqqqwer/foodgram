@@ -126,14 +126,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @avatar.mapping.delete
     def delete_avatar(self, request, *args, **kwargs):
-        user = self._get_current_user_object(request.user.id)
-        user.avatar = None
-        user.save()
+        self.request.user.avatar.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def _get_subscribe_target_user(self, pk):
-        queryset = self.get_queryset()
-        return get_object_or_404(queryset, pk=pk)
+        return get_object_or_404(User, pk=pk)
 
     def _get_current_user_object(self, id):
         return User.objects.get(id=id)
