@@ -1,11 +1,9 @@
 import urllib.parse
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponse
-from django.urls import reverse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import SetPasswordSerializer
 from rest_framework import status, viewsets
@@ -95,8 +93,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return self.list(request, *args, **kwargs)
 
     @action(methods=['post'], detail=True, url_path='subscribe')
-    def subscribe(self, request, *args, **kwargs):
-        subscribe_user = self._get_subscribe_target_user(kwargs['pk'])
+    def subscribe(self, request, pk):
+        subscribe_user = self._get_subscribe_target_user(pk)
         new_subscribe = Subscribe(
             user=request.user,
             subscribe_to=subscribe_user
@@ -110,8 +108,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
-    def delete_subscribe(self, request, *args, **kwargs):
-        subscribes = self._get_subscribe_target_user(kwargs['pk'])
+    def delete_subscribe(self, request, pk):
+        subscribes = self._get_subscribe_target_user(pk)
         subscribtion = Subscribe.objects.filter(
             user=request.user,
             subscribe_to=subscribes
@@ -123,9 +121,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(methods=['put'], detail=False, url_path='me/avatar')
     def avatar(self, request, *args, **kwargs):
-        self.get_object = lambda: self._get_current_user_object(
-            request.user.id
-        )
+        self.get_object = lambda: self.request.user
         return self.partial_update(request, *args, **kwargs)
 
     @avatar.mapping.delete
@@ -166,11 +162,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     @action(methods=['get'], detail=True, url_path='get-link')
-    def get_link(self, request, *args, **kwargs):
-        recipe = self.get_object()
-        short_link = reverse('shortlink', kwargs={'recipe_id': recipe.id})
-        full_short_link = 'https://' + settings.SITE_DOMANE + short_link
-        return Response({'short-link': full_short_link})
+    def get_link(self, request, pk):
+        recipe = get_object_or_404(Recipe, pk=pk)
+        short_link = request.build_absolute_uri(recipe.get_short_url)
+        return Response({'short-link': short_link})
 
     @action(methods=['get'], detail=False, url_path='download_shopping_cart')
     def download_shopping_cart(self, request, *args, **kwargs):

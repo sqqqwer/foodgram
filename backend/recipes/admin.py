@@ -33,7 +33,7 @@ class RecipeAdmin(admin.ModelAdmin):
     def count_in_favourites(self, obj):
         return obj.favourites_recipe.count()
 
-    @admin.display(description='Тэги')
+    @admin.display(description='Теги')
     def tags_link(self, obj):
         return self._get_many_objects_links_html(
             obj.tags.all()

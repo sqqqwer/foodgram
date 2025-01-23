@@ -1,7 +1,7 @@
 from django.urls import path, register_converter
 
-from linkshortener.converters import HexConverter
-from linkshortener.views import recipe_redirect
+from recipes.converters import HexConverter
+from recipes.views import recipe_redirect
 
 register_converter(HexConverter, 'hex')
 

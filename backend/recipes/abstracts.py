@@ -19,11 +19,13 @@ class ModelWithName(models.Model):
 class RecipeUserModel(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         'recipes.Recipe',
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
     )
 
     class Meta:
