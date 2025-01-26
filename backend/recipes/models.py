@@ -78,7 +78,7 @@ class Recipe(ModelWithName):
 
     @property
     def get_absolute_url(self):
-        return reverse('recipe-detail', kwargs={'pk': self.pk})
+        return f'/recipes/{self.id}/'
 
 
 class Cart(RecipeUserModel):

@@ -1,3 +1,4 @@
+from django.contrib.admin import ModelAdmin
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -37,3 +38,9 @@ class RecipeUserModel(models.Model):
                 name='%(app_label)s_%(class)s_prevent_not_unique_object'
             ),
         )
+
+
+class RecipeUserAdmin(ModelAdmin):
+    list_display = ('user', 'recipe')
+    search_fields = ('user__username', 'user__email', 'recipe__name')
+    list_select_related = ('user', 'recipe')

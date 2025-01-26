@@ -15,3 +15,14 @@ MEASUREMENT_UNITS = (
     ('drop', 'капля'),
     ('slice', 'кусок')
 )
+
+USER_ADMIN_ADD_FIELDSET = (
+    (
+        None,
+        {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'first_name', 'last_name',
+                       'usable_password', 'password1', 'password2'),
+        },
+    ),
+)

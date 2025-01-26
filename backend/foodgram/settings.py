@@ -8,13 +8,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'test_django_key')
 
 DEBUG = os.getenv('DJANGO_DEBUG', 'true').lower() == 'true'
 
-SITE_DOMANE = os.getenv('SITE_DOMANE', 'test_domane.net')
-
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://test_domane.net').split()
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split()
-
-if SITE_DOMANE not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append(SITE_DOMANE)
 
 
 INSTALLED_APPS = [
@@ -45,10 +40,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodgram.urls'
 
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,10 +61,6 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'foodgram'),

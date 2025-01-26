@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
 from foodgram.constants import (STR_OUTPUT_LIMIT, USER_CHAR_MAX_LENGHT,
@@ -13,9 +14,23 @@ class User(AbstractUser):
     )
     first_name = models.CharField('Имя', max_length=USER_CHAR_MAX_LENGHT)
     last_name = models.CharField('Фамилия', max_length=USER_CHAR_MAX_LENGHT)
+
+    username_validator = UnicodeUsernameValidator()
+    username = models.CharField(
+        'Имя пользователя',
+        max_length=USER_CHAR_MAX_LENGHT,
+        unique=True,
+        help_text=(
+            'Обязательное поле. Не более 150 символов.'
+            ' Только буквы, цифры и символы @/./+/-/_.'
+        ),
+        validators=[username_validator],
+        error_messages={
+            'unique': 'Пользователь с таким именем уже существует.',
+        },
+    )
     avatar = models.ImageField('Аватар', null=True,
                                default='', upload_to='users/')
-# Зачем переопределять username поле
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
 

@@ -2,11 +2,14 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.abstracts import RecipeUserAdmin
+from recipes.models import (Cart, Favourite, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 
 
 class IngredientTabular(admin.TabularInline):
     model = Recipe.ingredients.through
+    min_num = 1
 
 
 @admin.register(Ingredient)
@@ -26,8 +29,13 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author_link', 'ingredients_link',
                     'tags_link', 'count_in_favourites')
     list_filter = ('tags', )
+    list_select_related = ('author',)
     inlines = (IngredientTabular, )
     search_fields = ('name', 'author__username')
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.prefetch_related('tags', 'ingredients')
 
     @admin.display(description='В избранных у')
     def count_in_favourites(self, obj):
@@ -64,3 +72,20 @@ class RecipeAdmin(admin.ModelAdmin):
             args=(obj.id,)
         )
         return mark_safe(f'<a href="{url}">{link_text}</a>')
+
+
+@admin.register(Cart)
+class CartAdmin(RecipeUserAdmin):
+    pass
+
+
+@admin.register(Favourite)
+class FavouriteAdmin(RecipeUserAdmin):
+    pass
+
+
+@admin.register(RecipeIngredient)
+class RecipeIngredientAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'ingredient', 'amount')
+    search_fields = ('ingredient__name', )
+    list_select_related = ('ingredient', )
