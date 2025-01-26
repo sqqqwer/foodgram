@@ -2,19 +2,26 @@
 
 ## Содержание
 - [1. О сервисе](#1-о-сервисе)
-- [2. Функционал](#2-функционал)
-- [3. Стек технологий](#3-стек-технологий)
-- [4. Установка проекта](#4-установка-проекта)
-- [5. Документация](#5-документация)
-- [6. Регистрация и авторизация](#6-регистрация-и-авторизация-пользователей)
-- [7. Примеры запросов](#7-примеры-запросов)
-- [8. Авторы](#8-авторы)
+- [2. Автор](#2-автор)
+- [3. Функционал сервиса](#3-функционал-сервиса)
+- [4. Стек технологий](#4-стек-технологий)
+- [5. CI/CD](#5-cicd)
+- [6. Как локально развернуть сервис с докером](#6-как-локально-развернуть-сервис-с-докером)
+- [7. Как локально запустить бэкенд](#7-как-локально-запустить-бэкенд)
+- [8. Документация](#8-документация)
+- [9. Регистрация и авторизация пользователей](#9-регистрация-и-авторизация-пользователей)
+- [10. Примеры запросов](#10-примеры-запросов)
 
 ## 1. О сервисе
-С помощью этого сервиса можно создавать рецепты и делиться ими.
-Проект доступен по адресу: https://foodgramous.serveblog.net/
+Проект доступен по адресу: https://foodgramous.serveblog.net/ 
 
-## 2. Функционал сервиса
+С помощью этого сервиса можно создавать рецепты и делиться ими.
+
+## 2. Автор
+Чернявский Владислав Александрович 
+Github: https://github.com/sqqqwer
+
+## 3. Функционал сервиса
 - Реализована система регистрации и аутентификации пользователей
 - Можно поменять аватарку
 - Авторизованные пользователи могут создавать рецепты
@@ -24,7 +31,7 @@
 - Рецепты можно фильтровать по тегам
 - Есть админ панель
 
-## 3. Стек технологий
+## 4. Стек технологий
 - Docker
 - Nginx
 - CI/CD service (GitHub Actions)
@@ -32,16 +39,27 @@
 - Python 3.10
 - Django
 - Django REST FrameWork
+- PostgreSQL
+- Pillow
 - Djoser
 - Gunicorn
+- Django filter
 - DRF extra fields
 ### Фронтенд
 - Javascript
 - Node.js
 - React
 
+## 5. CI/CD
+#### CI
+- Проверка кода Бэкенд приложения с помощью flake8 и flake8-isort
+#### CD
+- Билд образа gateway и пуш на Docker hub (только для main ветки)
+- Билд образа бэкенда и пуш на Docker hub (только для main ветки)
+- Билд образа фронтенда и пуш на Docker hub (только для main ветки)
+- Деплой на сервер (только для main ветки)
 
-## 4. Установка проекта
+## 6. Как локально развернуть сервис с докером
 - Клонируйте репозиторий
 ```shell
 git clone https://github.com/sqqqwer/foodgram.git
@@ -50,9 +68,10 @@ git clone https://github.com/sqqqwer/foodgram.git
 ```shell
 cd foodgram/infra/
 ```
+- Подготовьте .env файл. Пример .env файла в папке: infra/example.env
 - Запустите docker
 
-(если у вас linux или macOS, то перед docker пишите sudo)
+(Если у вас linux или macOS, то перед docker пишите sudo)
 - Запустите проект
 ```shell
 docker compose up -d
@@ -65,6 +84,10 @@ docker compose exec backend python manage.py migrate
 ```shell
 docker compose exec backend python manage.py load_from_csv data/
 ```
+- Создайте супер пользователя
+```shell
+docker compose exec backend python manage.py createsuperuser
+```
 - Соберите статические файлы бэкенд приложения
 ```shell
 docker compose exec backend python manage.py collectstatic
@@ -74,10 +97,62 @@ docker compose exec backend python manage.py collectstatic
 docker compose exec cp -r /app/collected_static/. /backend_static/build/static/
 ```
 
-## 5. Документация
+## 7. Как локально запустить бэкенд
+- Клонируйте репозиторий
+```shell
+git clone https://github.com/sqqqwer/foodgram.git
+```
+- Перейдите в папку backend
+```shell
+cd foodgram/backend/
+```
+- Подготовьте .env файл. Пример .env файла в папке: infra/example.env
+
+- Создайте виртуальное окружение
+
+Если Windows:
+```shell
+python -m venv venv
+```
+Если Linux и macOS:
+```shell
+python3 -m venv venv
+```
+- Активируйте виртуальное окружение
+
+Если Windows:
+```shell
+source venv/Scripts/activate
+```
+Если Linux и macOS:
+```shell
+source venv/bin/activate
+```
+- Установите зависимости
+```shell
+pip install -r requirements.txt
+```
+- Примените миграции
+```shell
+python manage.py migrate
+```
+- Добавьте ингредиенты и теги в ДБ
+```shell
+python manage.py load_from_csv data/
+```
+- Создайте супер пользователя
+```shell
+python manage.py createsuperuser
+```
+- Запустите сервер
+```shell
+python manage.py runserver
+```
+
+## 8. Документация
 Для просмотра полной документации перейдите на http://localhost/api/docs/
 
-## 6. Регистрация и авторизация пользователей
+## 9. Регистрация и авторизация пользователей
 ### Регистрация
 Запрос:
 ```
@@ -125,7 +200,7 @@ POST http://localhost/api/auth/token/login/
 ```
 
 
-## 7. Примеры запросов
+## 10. Примеры запросов
 
 ### Добавление Аватара
 Запрос:
@@ -235,7 +310,3 @@ Authorization: Token asdasd87asdasd89asasdfv0ed7847e6f0bdc2
     "avatar": "http://localhost/media/users/image.png"
 }
 ```
-
-## 8. Авторы
-- _Чернявский Владислав_
-- _Команда Яндекс практикума_
